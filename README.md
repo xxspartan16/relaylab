@@ -2,9 +2,11 @@
 
 **A workflow failure laboratory with a clock you can rewind.**
 
+**[Live demo](https://relaylab-theta.vercel.app)** · [Project portfolio](https://brennan-portfolio-jade.vercel.app)
+
 Relaylab is a browser application for exploring why a workflow retries, stalls, or repeats an effect. Edit a dependency graph, inject transient or permanent failures, change the worker limit, then inspect a deterministic event trace. No account, backend, API key, or subscription is required.
 
-This is an AI-assisted personal software project by Brennan LeBlanc. It is a working v0.1 simulator, not a claim of a production deployment or a replacement for a durable job queue. The bundled scenarios are synthetic.
+This is an AI-assisted personal software project by Brennan LeBlanc. It is a working v0.1 simulator deployed as a public demonstration. It does not execute real jobs or provide durable queue infrastructure. The bundled scenarios are synthetic.
 
 ## Why this project exists
 
