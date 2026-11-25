@@ -1213,13 +1213,17 @@ footer {
   }
   .hero-art {
     width: 66%;
-    inset: auto -3% 1% auto;
-    height: 58%;
-    mask-image: linear-gradient(95deg, transparent, #000 22%);
+    inset: auto 0 5% auto;
+    height: auto;
+    aspect-ratio: 1152 / 680;
+    mask-image: linear-gradient(90deg, transparent, #000 20%, #000 88%, transparent);
   }
   .hero-art img {
-    object-fit: contain;
-    object-position: center right;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    transform: none;
+    mask-image: linear-gradient(180deg, transparent, #000 16%, #000 72%, transparent);
   }
   .hero-copy {
     width: 100%;
