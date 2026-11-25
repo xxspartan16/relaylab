@@ -43,9 +43,9 @@ export function WorkflowGraph({
     order.filter((n) => depth.get(n.id) === d),
   );
   const maxRows = Math.max(...columns.map((c) => c.length));
-  const width = Math.max(780, columns.length * 165 + 40);
+  const width = columns.length * 175 + 30;
   const rowPitch = 116;
-  const height = Math.max(310, maxRows * rowPitch + 80);
+  const height = Math.max(235, maxRows * rowPitch + 60);
   columns.forEach((column, c) =>
     column.forEach((node, row) =>
       positions.set(node.id, {
@@ -60,7 +60,7 @@ export function WorkflowGraph({
         <svg className="graph-lines" width={width} height={height} aria-hidden="true">
           <defs>
             <marker id="arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
-              <path d="M0 0L5 2.5L0 5" fill="#607084" />
+              <path d="M0 0L5 2.5L0 5" fill="#8a809f" />
             </marker>
           </defs>
           {workflow.nodes.flatMap((node) =>
@@ -77,8 +77,8 @@ export function WorkflowGraph({
                   fill="none"
                   stroke={
                     state.nodes[dep] && ['succeeded', 'cached'].includes(state.nodes[dep].status)
-                      ? '#49695e'
-                      : '#364252'
+                      ? '#847797'
+                      : '#56515f'
                   }
                   strokeWidth="1.5"
                   markerEnd="url(#arrow)"
