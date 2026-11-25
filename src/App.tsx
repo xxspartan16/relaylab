@@ -4,15 +4,14 @@ import {
   ArrowDownToLine,
   ArrowLeft,
   ArrowRight,
-  BookOpen,
   Braces,
   Check,
   ChevronDown,
   Clock3,
   Copy,
   FileJson,
-  FlaskConical,
   GitBranch,
+  ArrowDownRight,
   Info,
   Layers3,
   Play,
@@ -165,6 +164,7 @@ export default function App() {
       setFixtureId('custom');
       setLedger([]);
       invalidate();
+      setView('lab');
       setNotice(`Imported ${next.name}. Ready to simulate.`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not read the file.');
@@ -173,107 +173,50 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <a
-          className="brand"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            setView('lab');
-          }}
-          aria-label="Relaylab home"
-        >
-          <span className="brand-mark">
-            <GitBranch size={22} />
-          </span>
-          <span>
-            relaylab<span className="brand-dot">.</span>
-          </span>
-          <small>LAB</small>
-        </a>
-        <div className="sidebar-label">WORKSPACE</div>
-        <nav aria-label="Main navigation">
-          <button
-            className={view === 'lab' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setView('lab')}
+      <header className="masthead">
+        <div className="masthead-inner">
+          <a
+            className="brand"
+            href="#lab"
+            aria-label="Relaylab home"
+            onClick={(e) => {
+              e.preventDefault();
+              setView('lab');
+              window.scrollTo({ top: 0 });
+            }}
           >
-            <FlaskConical size={17} /> Simulation lab <span className="nav-dot" />
-          </button>
-          <button
-            className={view === 'guide' ? 'nav-item active' : 'nav-item'}
-            onClick={() => setView('guide')}
-          >
-            <BookOpen size={17} /> Field notes
-          </button>
-        </nav>
-        <div className="sidebar-label scenarios-title">
-          SCENARIOS <span>03</span>
-        </div>
-        <div className="scenario-list">
-          {FIXTURES.map((f) => (
-            <button
-              key={f.id}
-              className={`scenario ${fixtureId === f.id ? 'chosen' : ''}`}
-              onClick={() => {
-                chooseFixture(f.id);
-                setView('lab');
-              }}
-            >
-              <span className="scenario-icon">
-                <GitBranch size={15} />
-              </span>
-              <span>
-                <strong>{f.workflow.name}</strong>
-                <small>{f.eyebrow}</small>
-              </span>
-            </button>
-          ))}
-        </div>
-        <button className="import-nav" onClick={() => fileInput.current?.click()}>
-          <Upload size={14} /> Import workflow <span>.json</span>
-        </button>
-        <div className="sidebar-bottom">
-          <div className="local-indicator">
-            <span /> Local simulation
-          </div>
-          <p>
-            No API calls. No real side effects.
-            <br />
-            Your data stays in this tab.
-          </p>
-          <div className="author">
-            <span className="avatar">BL</span>
-            <span>
-              <strong>Brennan LeBlanc</strong>
-              <small>Personal software project</small>
+            <span className="brand-mark" aria-hidden="true">
+              <GitBranch size={19} strokeWidth={2.2} />
             </span>
-          </div>
-        </div>
-      </aside>
-      <div className="main-shell">
-        <header className="topbar">
-          <span>
-            <span className="muted">Workspace</span>
-            <span className="slash">/</span>
-            {view === 'lab' ? 'Simulation lab' : 'Field notes'}
-          </span>
-          <div>
-            <span className="version">v0.1</span>
-            <button className="topbar-link" onClick={() => setView('guide')}>
-              <BookOpen size={14} /> Field notes <ArrowRight size={13} />
+            Relaylab
+          </a>
+          <nav aria-label="Main navigation">
+            <button
+              className="nav-item"
+              aria-current={view === 'lab' ? 'page' : undefined}
+              onClick={() => setView('lab')}
+            >
+              Simulation lab
             </button>
-          </div>
-        </header>
-        <main>
+            <button
+              className="nav-item"
+              aria-current={view === 'guide' ? 'page' : undefined}
+              onClick={() => setView('guide')}
+            >
+              Field notes
+            </button>
+          </nav>
+          <button className="header-import secondary" onClick={() => fileInput.current?.click()}>
+            <Upload size={15} /> Import workflow
+          </button>
+        </div>
+      </header>
+      <div className="main-shell">
+        <main id="lab">
           {view === 'guide' ? (
             <section className="guide">
-              <div className="eyebrow">
-                <BookOpen size={14} /> ENGINEERING FIELD NOTES
-              </div>
               <h1>
-                What happens between
-                <br />
-                “try again” and “done”?
+                Field notes<span>.</span>
               </h1>
               <p className="guide-lead">
                 Retries look simple until a payment succeeds twice, a dependency never finishes, or
@@ -281,8 +224,7 @@ export default function App() {
               </p>
               <div className="guide-grid">
                 <article>
-                  <span>01</span>
-                  <h2>A clock you can trust</h2>
+                  <h2>Logical time</h2>
                   <p>
                     The engine uses logical time. A node with a 300 ms duration advances the
                     scheduler by 300 simulated milliseconds, without waiting. Identical workflows,
@@ -290,8 +232,7 @@ export default function App() {
                   </p>
                 </article>
                 <article>
-                  <span>02</span>
-                  <h2>Failure has a shape</h2>
+                  <h2>Failure handling</h2>
                   <p>
                     Transient failures consume the retry budget. Permanent failures stop
                     immediately. Dependent nodes are blocked; unrelated branches continue. Jitter is
@@ -299,8 +240,7 @@ export default function App() {
                   </p>
                 </article>
                 <article>
-                  <span>03</span>
-                  <h2>One key, one intent</h2>
+                  <h2>Idempotency keys</h2>
                   <p>
                     The ledger fingerprints the operation and canonical JSON input. A repeated key
                     with the same intent reuses a result. A changed payload is a conflict.
@@ -308,8 +248,7 @@ export default function App() {
                   </p>
                 </article>
                 <article>
-                  <span>04</span>
-                  <h2>Replay, not re-execution</h2>
+                  <h2>Event replay</h2>
                   <p>
                     The replay slider folds an immutable event log into node state. Moving the
                     slider never performs work. This simulator has no durable workers, real HTTP
@@ -334,398 +273,432 @@ export default function App() {
             </section>
           ) : (
             <>
-              <section className="page-heading">
-                <div>
-                  <div className="eyebrow">
-                    <span /> WORKFLOW RELIABILITY LAB
-                  </div>
-                  <h1>Make failures explain themselves.</h1>
-                  <p>Inject a failure. Follow the retry. Replay every decision.</p>
+              <section
+                className="studio-hero"
+                onPointerMove={(e) => {
+                  if (e.pointerType !== 'mouse') return;
+                  const bounds = e.currentTarget.getBoundingClientRect();
+                  const x = (e.clientX - bounds.left) / bounds.width - 0.5;
+                  const y = (e.clientY - bounds.top) / bounds.height - 0.5;
+                  e.currentTarget.style.setProperty('--art-x', `${x * 10}px`);
+                  e.currentTarget.style.setProperty('--art-y', `${y * 8}px`);
+                }}
+                onPointerLeave={(e) => {
+                  e.currentTarget.style.removeProperty('--art-x');
+                  e.currentTarget.style.removeProperty('--art-y');
+                }}
+              >
+                <div className="hero-art" aria-hidden="true">
+                  <img
+                    src={`${import.meta.env.BASE_URL}art/relay-studio.webp`}
+                    alt=""
+                    fetchPriority="high"
+                  />
                 </div>
-                <button
-                  className="secondary export-button"
-                  disabled={!result}
-                  onClick={() => result && download('relaylab-trace.json', result)}
-                >
-                  <ArrowDownToLine size={15} /> Export trace
-                </button>
+                <div className="hero-copy">
+                  <h1>
+                    Workflow
+                    <br />
+                    simulation<span>.</span>
+                  </h1>
+                  <p>
+                    Model a failure, follow the retry, and replay each decision in the workflow.
+                  </p>
+                  <a className="hero-action" href="#workbench">
+                    Open workbench <ArrowDownRight size={16} />
+                  </a>
+                </div>
               </section>
-              <div className="mobile-scenarios">
-                <label>
-                  SCENARIO
-                  <select
-                    aria-label="Choose scenario"
-                    value={fixtureId}
-                    onChange={(e) => chooseFixture(e.target.value)}
-                  >
-                    {fixtureId === 'custom' ? (
-                      <option value="custom">Custom workflow</option>
-                    ) : null}
+              <div className="workbench" id="workbench">
+                <div className="scenario-toolbar">
+                  <div className="scenario-list" aria-label="Scenarios">
                     {FIXTURES.map((f) => (
-                      <option key={f.id} value={f.id}>
+                      <button
+                        key={f.id}
+                        aria-pressed={fixtureId === f.id}
+                        onClick={() => chooseFixture(f.id)}
+                      >
                         {f.workflow.name}
-                      </option>
+                      </button>
                     ))}
-                  </select>
-                </label>
-                <button className="secondary" onClick={() => fileInput.current?.click()}>
-                  <Upload size={13} /> Import JSON
-                </button>
-              </div>
-              <section className="workflow-heading">
-                <div>
-                  <span className="workflow-icon">
-                    <GitBranch size={20} />
-                  </span>
+                  </div>
+                  <label className="scenario-picker">
+                    Scenario
+                    <select
+                      aria-label="Choose scenario"
+                      value={fixtureId}
+                      onChange={(e) => chooseFixture(e.target.value)}
+                    >
+                      {fixtureId === 'custom' ? (
+                        <option value="custom">Custom workflow</option>
+                      ) : null}
+                      {FIXTURES.map((f) => (
+                        <option key={f.id} value={f.id}>
+                          {f.workflow.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    className="export-button secondary"
+                    disabled={!result}
+                    onClick={() => result && download('relaylab-trace.json', result)}
+                  >
+                    <ArrowDownToLine size={15} /> Export trace
+                  </button>
+                </div>
+                <section className="workflow-heading">
                   <div>
-                    <h2>
-                      {workflow.name}
-                      <span className="tag">
-                        {fixtureId === 'custom' ? 'CUSTOM WORKFLOW' : 'SYNTHETIC SCENARIO'}
-                      </span>
-                    </h2>
+                    <div className="scenario-source">
+                      <span />
+                      {fixtureId === 'custom' ? 'Imported workflow' : 'Sample workflow'}
+                    </div>
+                    <h2>{workflow.name}</h2>
                     <p>{workflow.description}</p>
                   </div>
-                </div>
-                <button
-                  className="icon-button"
-                  aria-label="Edit workflow JSON"
-                  onClick={openEditor}
-                >
-                  <Braces size={17} />
-                </button>
-              </section>
-              <section className="run-controls" aria-label="Simulation settings">
-                <label>
-                  CONCURRENCY
-                  <select
-                    value={options.concurrency}
-                    onChange={(e) => changeOption('concurrency', Number(e.target.value))}
-                  >
-                    {[1, 2, 3, 4].map((n) => (
-                      <option key={n} value={n}>
-                        {n} {n === 1 ? 'worker' : 'workers'}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  MAX ATTEMPTS
-                  <select
-                    value={options.maxAttempts}
-                    onChange={(e) => changeOption('maxAttempts', Number(e.target.value))}
-                  >
-                    {[1, 2, 3, 4, 5, 6].map((n) => (
-                      <option key={n} value={n}>
-                        {n} {n === 1 ? 'attempt' : 'attempts'}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  BASE BACKOFF
-                  <select
-                    value={options.baseDelayMs}
-                    onChange={(e) => changeOption('baseDelayMs', Number(e.target.value))}
-                  >
-                    {[0, 100, 400, 800, 1500].map((n) => (
-                      <option key={n} value={n}>
-                        {n} ms
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  JITTER
-                  <select
-                    value={options.jitterFraction}
-                    onChange={(e) => changeOption('jitterFraction', Number(e.target.value))}
-                  >
-                    {[0, 0.1, 0.2, 0.5, 1].map((n) => (
-                      <option key={n} value={n}>
-                        +0–{n * 100}%
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="seed-field">
-                  SEED
-                  <input
-                    type="number"
-                    value={options.seed}
-                    min="0"
-                    max="4294967295"
-                    onChange={(e) => changeOption('seed', Number(e.target.value))}
-                  />
-                </label>
-                <div className="run-actions">
                   <button
-                    className="icon-button"
-                    aria-label="Reset trace and ledger"
-                    onClick={reset}
+                    className="secondary edit-workflow"
+                    aria-label="Edit workflow JSON"
+                    onClick={openEditor}
                   >
-                    <RotateCcw size={16} />
+                    <Braces size={16} /> <span>Edit JSON</span>
                   </button>
-                  <button className="primary" onClick={() => run()}>
-                    <Play size={15} fill="currentColor" /> Run simulation
-                  </button>
-                </div>
-              </section>
-              {error && !editor ? (
-                <div className="error-banner" role="alert">
-                  {error}
-                </div>
-              ) : null}
-              <div className="workbench-grid">
-                <section className="graph-panel">
-                  <div className="panel-heading">
-                    <h3>
-                      <Layers3 size={15} /> Workflow map
-                    </h3>
-                    <span className={`status-pill ${state.status}`}>
-                      <span />
-                      {state.status === 'idle'
-                        ? 'Ready'
-                        : state.status === 'running'
-                          ? 'Replaying'
-                          : state.status === 'succeeded'
-                            ? 'Completed'
-                            : 'Failed'}
-                    </span>
-                  </div>
-                  <WorkflowGraph
-                    workflow={workflow}
-                    state={state}
-                    selected={selectedNode.id}
-                    onSelect={setSelected}
-                  />
-                  <div className="graph-footer">
-                    <span>
-                      <i className="legend-dot completed" />
-                      Completed
-                    </span>
-                    <span>
-                      <i className="legend-dot retry" />
-                      Retry
-                    </span>
-                    <span>
-                      <i className="legend-dot failed" />
-                      Failed / blocked
-                    </span>
-                    <span className="legend-note">
-                      <ShieldCheck size={12} /> Idempotent step
-                    </span>
-                  </div>
-                  <div className="replay-controls">
+                </section>
+                <section className="run-controls" aria-label="Simulation settings">
+                  <label>
+                    CONCURRENCY
+                    <select
+                      value={options.concurrency}
+                      onChange={(e) => changeOption('concurrency', Number(e.target.value))}
+                    >
+                      {[1, 2, 3, 4].map((n) => (
+                        <option key={n} value={n}>
+                          {n} {n === 1 ? 'worker' : 'workers'}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    MAX ATTEMPTS
+                    <select
+                      value={options.maxAttempts}
+                      onChange={(e) => changeOption('maxAttempts', Number(e.target.value))}
+                    >
+                      {[1, 2, 3, 4, 5, 6].map((n) => (
+                        <option key={n} value={n}>
+                          {n} {n === 1 ? 'attempt' : 'attempts'}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    BASE BACKOFF
+                    <select
+                      value={options.baseDelayMs}
+                      onChange={(e) => changeOption('baseDelayMs', Number(e.target.value))}
+                    >
+                      {[0, 100, 400, 800, 1500].map((n) => (
+                        <option key={n} value={n}>
+                          {n} ms
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    JITTER
+                    <select
+                      value={options.jitterFraction}
+                      onChange={(e) => changeOption('jitterFraction', Number(e.target.value))}
+                    >
+                      {[0, 0.1, 0.2, 0.5, 1].map((n) => (
+                        <option key={n} value={n}>
+                          +0–{n * 100}%
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="seed-field">
+                    SEED
+                    <input
+                      type="number"
+                      value={options.seed}
+                      min="0"
+                      max="4294967295"
+                      onChange={(e) => changeOption('seed', Number(e.target.value))}
+                    />
+                  </label>
+                  <div className="run-actions">
                     <button
                       className="icon-button"
-                      aria-label="Previous event"
-                      disabled={!result || cursor === 0}
-                      onClick={() => setCursor((c) => Math.max(0, c - 1))}
+                      aria-label="Reset trace and ledger"
+                      onClick={reset}
                     >
-                      <ArrowLeft size={14} />
+                      <RotateCcw size={16} />
                     </button>
-                    <button
-                      className="icon-button"
-                      aria-label="Step to next event"
-                      disabled={!!result && cursor === result.events.length}
-                      onClick={() =>
-                        result ? setCursor((c) => Math.min(result.events.length, c + 1)) : run(true)
-                      }
-                    >
-                      <SkipForward size={15} />
+                    <button className="primary" onClick={() => run()}>
+                      <Play size={15} fill="currentColor" /> Run simulation
                     </button>
-                    <div className="replay-track">
-                      <div>
-                        <span>REPLAY TIMELINE</span>
-                        <span>
-                          {cursor} / {result?.events.length ?? 0} events
-                        </span>
-                      </div>
-                      <input
-                        aria-label="Replay event"
-                        type="range"
-                        min="0"
-                        max={result?.events.length ?? 0}
-                        value={cursor}
-                        disabled={!result}
-                        onChange={(e) => setCursor(Number(e.target.value))}
-                      />
-                    </div>
-                    <div className="logical-clock">
-                      <Clock3 size={13} />
-                      <strong>{state.at.toLocaleString()}</strong>
-                      <span>ms</span>
-                    </div>
                   </div>
                 </section>
-                <aside className="inspector">
-                  <div className="panel-heading">
-                    <h3>
-                      <Settings2 size={15} /> Step inspector
-                    </h3>
-                    <span className="small-label">SELECT A NODE</span>
+                {error && !editor ? (
+                  <div className="error-banner" role="alert">
+                    {error}
                   </div>
-                  <div className="inspector-body">
-                    <div className={`inspector-status ${nodeState?.status ?? 'pending'}`}>
-                      <span />
-                      {nodeState?.status ?? 'pending'}
+                ) : null}
+                <div className="workbench-grid">
+                  <section className="graph-panel">
+                    <div className="panel-heading">
+                      <h3>
+                        <Layers3 size={15} /> Workflow map
+                      </h3>
+                      <span className={`status-pill ${state.status}`}>
+                        <span />
+                        {state.status === 'idle'
+                          ? 'Ready'
+                          : state.status === 'running'
+                            ? 'Replaying'
+                            : state.status === 'succeeded'
+                              ? 'Completed'
+                              : 'Failed'}
+                      </span>
                     </div>
-                    <h3>{selectedNode.label}</h3>
-                    <code>{selectedNode.id}</code>
-                    <div className="inspector-facts">
+                    <WorkflowGraph
+                      workflow={workflow}
+                      state={state}
+                      selected={selectedNode.id}
+                      onSelect={setSelected}
+                    />
+                    <div className="graph-footer">
                       <span>
-                        Duration<strong>{selectedNode.durationMs} ms</strong>
+                        <i className="legend-dot completed" />
+                        Completed
                       </span>
                       <span>
-                        Attempts
-                        <strong>
-                          {nodeState?.attempts ?? 0} / {options.maxAttempts}
-                        </strong>
+                        <i className="legend-dot retry" />
+                        Retry
+                      </span>
+                      <span>
+                        <i className="legend-dot failed" />
+                        Failed / blocked
+                      </span>
+                      <span className="legend-note">
+                        <ShieldCheck size={12} /> Idempotent step
                       </span>
                     </div>
-                    <div className="divider" />
-                    <label className="failure-label">
-                      INJECT TRANSIENT FAILURES
-                      <select
-                        value={selectedNode.failUntilAttempt}
-                        onChange={(e) => changeNode('failUntilAttempt', Number(e.target.value))}
+                    <div className="replay-controls">
+                      <button
+                        className="icon-button"
+                        aria-label="Previous event"
+                        disabled={!result || cursor === 0}
+                        onClick={() => setCursor((c) => Math.max(0, c - 1))}
                       >
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                          <option key={n} value={n}>
-                            {n === 0 ? 'None' : `First ${n} ${n === 1 ? 'attempt' : 'attempts'}`}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="check-label">
-                      <input
-                        type="checkbox"
-                        checked={selectedNode.permanentFailure}
-                        onChange={(e) => changeNode('permanentFailure', e.target.checked)}
-                      />{' '}
-                      Permanent failure<span>Never retry</span>
-                    </label>
-                    <div className="divider" />
-                    <h4>INPUT PAYLOAD</h4>
-                    <pre>{stringify(selectedNode.input)}</pre>
-                    {selectedNode.idempotencyKey ? (
-                      <div className="key-box">
-                        <ShieldCheck size={13} />
+                        <ArrowLeft size={14} />
+                      </button>
+                      <button
+                        className="icon-button"
+                        aria-label="Step to next event"
+                        disabled={!!result && cursor === result.events.length}
+                        onClick={() =>
+                          result
+                            ? setCursor((c) => Math.min(result.events.length, c + 1))
+                            : run(true)
+                        }
+                      >
+                        <SkipForward size={15} />
+                      </button>
+                      <div className="replay-track">
+                        <div>
+                          <span>REPLAY TIMELINE</span>
+                          <span>
+                            {cursor} / {result?.events.length ?? 0} events
+                          </span>
+                        </div>
+                        <input
+                          aria-label="Replay event"
+                          type="range"
+                          min="0"
+                          max={result?.events.length ?? 0}
+                          value={cursor}
+                          disabled={!result}
+                          onChange={(e) => setCursor(Number(e.target.value))}
+                        />
+                      </div>
+                      <div className="logical-clock">
+                        <Clock3 size={13} />
+                        <strong>{state.at.toLocaleString()}</strong>
+                        <span>ms</span>
+                      </div>
+                    </div>
+                  </section>
+                  <aside className="inspector">
+                    <div className="panel-heading">
+                      <h3>
+                        <Settings2 size={15} /> Step inspector
+                      </h3>
+                    </div>
+                    <div className="inspector-body">
+                      <div className={`inspector-status ${nodeState?.status ?? 'pending'}`}>
+                        <span />
+                        {nodeState?.status ?? 'pending'}
+                      </div>
+                      <h3>{selectedNode.label}</h3>
+                      <code>{selectedNode.id}</code>
+                      <div className="inspector-facts">
                         <span>
-                          <small>IDEMPOTENCY KEY</small>
-                          <code>{selectedNode.idempotencyKey}</code>
+                          Duration<strong>{selectedNode.durationMs} ms</strong>
+                        </span>
+                        <span>
+                          Attempts
+                          <strong>
+                            {nodeState?.attempts ?? 0} / {options.maxAttempts}
+                          </strong>
                         </span>
                       </div>
-                    ) : (
-                      <p className="no-key">No idempotency key for this step.</p>
-                    )}
-                    {nodeState?.error ? <p className="node-error">{nodeState.error}</p> : null}
-                    {nodeState?.output ? (
-                      <details className="output-details">
-                        <summary>
-                          Recorded output <ChevronDown size={13} />
-                        </summary>
-                        <pre>{stringify(nodeState.output)}</pre>
-                      </details>
-                    ) : null}
+                      <div className="divider" />
+                      <label className="failure-label">
+                        INJECT TRANSIENT FAILURES
+                        <select
+                          value={selectedNode.failUntilAttempt}
+                          onChange={(e) => changeNode('failUntilAttempt', Number(e.target.value))}
+                        >
+                          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                            <option key={n} value={n}>
+                              {n === 0 ? 'None' : `First ${n} ${n === 1 ? 'attempt' : 'attempts'}`}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="check-label">
+                        <input
+                          type="checkbox"
+                          checked={selectedNode.permanentFailure}
+                          onChange={(e) => changeNode('permanentFailure', e.target.checked)}
+                        />{' '}
+                        Permanent failure<span>Never retry</span>
+                      </label>
+                      <div className="divider" />
+                      <h4>INPUT PAYLOAD</h4>
+                      <pre>{stringify(selectedNode.input)}</pre>
+                      {selectedNode.idempotencyKey ? (
+                        <div className="key-box">
+                          <ShieldCheck size={13} />
+                          <span>
+                            <small>IDEMPOTENCY KEY</small>
+                            <code>{selectedNode.idempotencyKey}</code>
+                          </span>
+                        </div>
+                      ) : (
+                        <p className="no-key">No idempotency key for this step.</p>
+                      )}
+                      {nodeState?.error ? <p className="node-error">{nodeState.error}</p> : null}
+                      {nodeState?.output ? (
+                        <details className="output-details">
+                          <summary>
+                            Recorded output <ChevronDown size={13} />
+                          </summary>
+                          <pre>{stringify(nodeState.output)}</pre>
+                        </details>
+                      ) : null}
+                    </div>
+                  </aside>
+                </div>
+                <section className="metrics" aria-label="Trace metrics">
+                  <div>
+                    <span>
+                      <Check size={14} /> COMPLETED STEPS
+                    </span>
+                    <strong>
+                      {successes}
+                      <small> / {workflow.nodes.length}</small>
+                    </strong>
                   </div>
-                </aside>
-              </div>
-              <section className="metrics" aria-label="Trace metrics">
-                <div>
-                  <span>
-                    <Check size={14} /> COMPLETED STEPS
-                  </span>
-                  <strong>
-                    {successes}
-                    <small> / {workflow.nodes.length}</small>
-                  </strong>
-                </div>
-                <div>
-                  <span>
-                    <Activity size={14} /> EXECUTED ATTEMPTS
-                  </span>
-                  <strong>{attempts}</strong>
-                </div>
-                <div>
-                  <span>
-                    <RotateCcw size={14} /> SCHEDULED RETRIES
-                  </span>
-                  <strong className={retries ? 'amber' : ''}>{retries}</strong>
-                </div>
-                <div>
-                  <span>
-                    <ShieldCheck size={14} /> REUSED RESULTS
-                  </span>
-                  <strong>{cached}</strong>
-                </div>
-              </section>
-              <section className="trace-panel">
-                <div className="panel-heading">
-                  <h3>
-                    <Terminal size={15} /> Event trace{' '}
-                    <span className="count-badge">{result?.events.length ?? 0}</span>
-                  </h3>
+                  <div>
+                    <span>
+                      <Activity size={14} /> EXECUTED ATTEMPTS
+                    </span>
+                    <strong>{attempts}</strong>
+                  </div>
+                  <div>
+                    <span>
+                      <RotateCcw size={14} /> SCHEDULED RETRIES
+                    </span>
+                    <strong className={retries ? 'amber' : ''}>{retries}</strong>
+                  </div>
+                  <div>
+                    <span>
+                      <ShieldCheck size={14} /> REUSED RESULTS
+                    </span>
+                    <strong>{cached}</strong>
+                  </div>
+                </section>
+                <section className="trace-panel">
+                  <div className="panel-heading">
+                    <h3>
+                      <Terminal size={15} /> Event trace{' '}
+                      <span className="count-badge">{result?.events.length ?? 0}</span>
+                    </h3>
+                    <label className="inline-check">
+                      <input
+                        type="checkbox"
+                        checked={filterSelected}
+                        onChange={(e) => setFilterSelected(e.target.checked)}
+                      />{' '}
+                      Selected step only
+                    </label>
+                  </div>
+                  <EventLog
+                    events={result?.events ?? []}
+                    cursor={cursor}
+                    selected={filterSelected ? selectedNode.id : null}
+                    onSeek={setCursor}
+                  />
+                </section>
+                <section className="ledger-bar">
+                  <div>
+                    <ShieldCheck size={17} />
+                    <span>
+                      <strong>Session idempotency ledger</strong>
+                      <small>
+                        {ledger.length} recorded {ledger.length === 1 ? 'key' : 'keys'} · in memory
+                        until this tab closes
+                      </small>
+                    </span>
+                  </div>
                   <label className="inline-check">
                     <input
                       type="checkbox"
-                      checked={filterSelected}
-                      onChange={(e) => setFilterSelected(e.target.checked)}
+                      checked={reuseLedger}
+                      onChange={(e) => setReuseLedger(e.target.checked)}
                     />{' '}
-                    Selected step only
+                    Reuse on next run
                   </label>
-                </div>
-                <EventLog
-                  events={result?.events ?? []}
-                  cursor={cursor}
-                  selected={filterSelected ? selectedNode.id : null}
-                  onSeek={setCursor}
-                />
-              </section>
-              <section className="ledger-bar">
-                <div>
-                  <ShieldCheck size={17} />
+                  <button
+                    className="text-button"
+                    disabled={!ledger.length}
+                    onClick={() => {
+                      setLedger([]);
+                      setNotice('Session ledger cleared.');
+                    }}
+                  >
+                    Clear ledger
+                  </button>
+                </section>
+                <div className="notice" role="status" aria-live="polite">
+                  <Info size={13} />
                   <span>
-                    <strong>Session idempotency ledger</strong>
-                    <small>
-                      {ledger.length} recorded {ledger.length === 1 ? 'key' : 'keys'} · in memory
-                      until this tab closes
-                    </small>
+                    {notice ||
+                      'The initial trace is a synthetic demonstration. Change a setting or step to explore a new outcome.'}
                   </span>
                 </div>
-                <label className="inline-check">
-                  <input
-                    type="checkbox"
-                    checked={reuseLedger}
-                    onChange={(e) => setReuseLedger(e.target.checked)}
-                  />{' '}
-                  Reuse on next run
-                </label>
-                <button
-                  className="text-button"
-                  disabled={!ledger.length}
-                  onClick={() => {
-                    setLedger([]);
-                    setNotice('Session ledger cleared.');
-                  }}
-                >
-                  Clear ledger
-                </button>
-              </section>
-              <div className="notice" role="status" aria-live="polite">
-                <Info size={13} />
-                <span>
-                  {notice ||
-                    'The initial trace is a synthetic demonstration. Change a setting or step to explore a new outcome.'}
-                </span>
               </div>
             </>
           )}
           <footer>
-            <span>Built to make the invisible parts of automation visible.</span>
             <span>
-              Deterministic engine <span className="footer-dot">·</span> No backend required
+              Relaylab <span className="footer-dot">/</span> Brennan LeBlanc
+            </span>
+            <span className="footer-status">
+              <i /> Runs locally in your browser
             </span>
           </footer>
         </main>

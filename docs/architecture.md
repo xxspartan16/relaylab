@@ -56,7 +56,7 @@ Run configuration is validated again at the engine boundary. The UI does not pro
 
 ## UI and accessibility
 
-The graph renders nodes as real buttons; SVG contains only decorative dependency edges. Selected state uses `aria-pressed`. Controls have labels, replay is a native range input, and the definition editor uses a native modal dialog with browser focus containment. A reduced-motion preference disables cosmetic transitions. Font families use local system fallbacks with no runtime font request.
+The graph renders nodes as real buttons; SVG contains only decorative dependency edges. Selected state uses `aria-pressed`. Controls have labels, replay is a native range input, and the definition editor uses a native modal dialog with browser focus containment. A reduced-motion preference disables cosmetic transitions. DM Sans is bundled with the static app and falls back to system fonts.
 
 ## Verification scope
 
